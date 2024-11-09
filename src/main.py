@@ -1,38 +1,29 @@
-# src/main.py
+import os
 from preprocessing import preprocess_image
-from segmentation import canny_edge_detection, threshold_segmentation, watershed_segmentation
-import matplotlib.pyplot as plt
 import cv2
 
-# Path to a sample image
-image_path = "../data/raw/sample_image.png"  # Make sure to have this file
+# Set the working directory to the project root
+os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
-# Process the image
-processed_image = preprocess_image(image_path)
+# Define the directories
+input_dir = "data/raw/"
+output_dir = "data/processed/"
 
-# Apply various segmentation techniques
-edges = canny_edge_detection(processed_image)
-thresholded = threshold_segmentation(processed_image)
-watershed_segmented = watershed_segmentation(processed_image)
+# Ensure the output directory exists
+os.makedirs(output_dir, exist_ok=True)
 
-# Display segmentation results
-plt.figure(figsize=(15, 5))
+# Process each image in the input directory
+for filename in os.listdir(input_dir):
+    if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.tif')):  # Check for common image file types
+        input_path = os.path.join(input_dir, filename)
+        output_path = os.path.join(output_dir, filename)
 
-plt.subplot(1, 3, 1)
-plt.imshow(edges, cmap='gray')
-plt.title("Canny Edge Detection")
+        # Preprocess the image
+        processed_image = preprocess_image(input_path)
 
-plt.subplot(1, 3, 2)
-plt.imshow(thresholded, cmap='gray')
-plt.title("Threshold Segmentation")
+        # Save the processed image
+        cv2.imwrite(output_path, processed_image)
 
-plt.subplot(1, 3, 3)
-plt.imshow(watershed_segmented, cmap='gray')
-plt.title("Watershed Segmentation")
+        print(f"Processed and saved: {filename}")
 
-plt.show()
-
-# Save results (optional)
-cv2.imwrite("../data/processed/edges.png", edges)
-cv2.imwrite("../data/processed/thresholded.png", thresholded)
-cv2.imwrite("../data/processed/watershed.png", watershed_segmented)
+print("All images have been processed.")
