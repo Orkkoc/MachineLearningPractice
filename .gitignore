@@ -10,6 +10,7 @@ __pycache__/
 # Ignore data folders if they contain large raw data (optional)
 data/raw/
 data/processed/
+dataset/
 
 # Ignore model files or outputs if they are large
 *.h5
